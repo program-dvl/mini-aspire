@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginPostRequest;
 use Auth;
-use Lang;
+use Illuminate\Http\Response;
 
 class LoginController extends Controller
 {
@@ -21,10 +21,18 @@ class LoginController extends Controller
             $success['token'] =  $user->createToken('MyApp')->plainTextToken; 
             $success['name'] =  $user->name;
    
-            return $this->sendResponse($success, Lang::get('auth.login_success'));
+            return $this->sendResponse(
+                $success, 
+                trans('auth.login_success'), 
+                Response::HTTP_OK
+            );
         } 
         else{ 
-            return $this->sendError('Unauthorised.', ['error'=> Lang::get('auth.unauthorised')]);
+            return $this->sendError(
+                'Unauthorised.', 
+                ['error'=> trans('auth.unauthorised')],
+                Response::HTTP_FORBIDDEN
+            );
         } 
     }
 }
