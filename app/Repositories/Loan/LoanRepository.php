@@ -2,6 +2,9 @@
 namespace App\Repositories\Loan;
 
 use App\Models\Loan;
+use App\Models\RepaymentSchedule;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class LoanRepository implements LoanInterface
 {
@@ -11,14 +14,23 @@ class LoanRepository implements LoanInterface
     public $loan;
 
     /**
+     * @var App\Models\RepaymentSchedule
+     */
+    public $repaymentSchedule;
+
+    /**
      * Create a new Loan repository instance.
      *
      * @param  App\Models\Loan $loan
      * @return void
      */
-    public function __construct(Loan $loan)
+    public function __construct(
+        Loan $loan,
+        RepaymentSchedule $repaymentSchedule
+    )
     {
         $this->loan = $loan;
+        $this->repaymentSchedule = $repaymentSchedule;
     }
 
     /**
@@ -56,6 +68,28 @@ class LoanRepository implements LoanInterface
     public function details(int $loanId)
     {
         return $this->loan->findOrFail($loanId);
+    }
+
+     /**
+     * Update a loan data
+     *
+     * @param array $data
+     * @return void
+     */
+    public function update(array $payload, int $loanId)
+    {
+        $loan = $this->loan->findOrFail($loanId);
+        return $loan->update($payload);
+    }
+
+    /**
+     * Save EMI schedule data
+     *
+     * @param array $schedules
+     * @return void
+     */
+    public function savePaymentReschedule($schedules) {
+        $this->repaymentSchedule->insert($schedules);
     }
 
 }

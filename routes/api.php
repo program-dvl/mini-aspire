@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\Loan\LoanController as AdminLoanController;
 use App\Http\Controllers\Customer\Auth\LoginController;
 use App\Http\Controllers\Customer\Loan\LoanController;
 use Illuminate\Http\Request;
@@ -38,5 +39,11 @@ Route::controller(LoanController::class)->group(function(){
         Route::post('apply', 'apply');
         Route::get('list', 'list');
         Route::get('{id}', 'details');
+    });
+});
+
+Route::controller(AdminLoanController::class)->group(function(){
+    Route::group(['prefix' => 'admin/loan', 'middleware' => 'auth:sanctum'], function(){
+        Route::patch('{id}', 'update');
     });
 });

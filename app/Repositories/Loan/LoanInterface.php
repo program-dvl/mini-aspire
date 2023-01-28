@@ -19,4 +19,28 @@ interface LoanInterface
      */
     public function list(int $customerId);
 
+    /**
+     * Get a loan details
+     *
+     * @param int $loanId
+     * @return void
+     */
+    public function details(int $loanId);
+
+    /**
+     * Update a loan data
+     *
+     * @param int $customerId
+     * @return array
+     */
+    public function update(array $payload, int $loanId);
+
+    /**
+     * Save EMI schedule data
+     *
+     * @param array $payload
+     * @return array
+     */
+    public function savePaymentReschedule(array $payload);
+
 }

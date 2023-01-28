@@ -17,5 +17,6 @@ return [
     'error' => 'Oops, Failed to apply at this moment, please try after sometime',
     'success_listing' => 'Loans listed successfully.',
     'loan_found' => 'Loan data listed successfully.',
-    'loan_not_found' => 'Loan data not found'
+    'loan_not_found' => 'Loan data not found.',
+    'update_success' => 'Loan data updated successfully.'
 ];

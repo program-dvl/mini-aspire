@@ -3,7 +3,8 @@
 namespace App\Services\Loan;
 
 use App\Repositories\Loan\LoanRepository;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class LoanService
 {
@@ -31,7 +32,14 @@ class LoanService
      */
     public function apply(array $payload)
     {
-        $this->loanRepository->apply($payload);
+        $loan = $this->loanRepository->apply($payload);
+        $schedules = $this->generateRepaymentSchedule($payload['amount'], $payload['term']);
+        $mappedData = Arr::map($schedules, function ($value, $key) use ($loan) {
+            $value['created_at'] = Carbon::now()->toDateTimeString();
+            $value['loan_id'] = $loan->id;
+            return $value;
+        });
+        $this->loanRepository->savePaymentReschedule($mappedData);
     }
 
      /**
@@ -56,5 +64,36 @@ class LoanService
         return $this->loanRepository->details($loanId);
     }
 
-    
+    /**
+     * Update a loan data
+     * 
+     * @param array $payload
+     * @param int $loanId
+     * @return void
+     */
+    public function update(array $payload, int $loanId)
+    {
+        return $this->loanRepository->update($payload, $loanId);
+    }
+
+    /**
+     * Generate repayment schedule
+     * 
+     * @param float $amount
+     * @param int $term
+     * @param int $loanId
+     * @return array
+     */
+    public function generateRepaymentSchedule($amount, $term) {
+        $emiSchedule = [];
+        $emiAmount = round($amount / $term, 2);
+        for ($i=1; $i <= $term; $i++) { 
+            $emiDate = Carbon::now()->addWeeks($i);
+            $emiSchedule[] = [
+                'date' => $emiDate->toDateString(),
+                'amount' => $emiAmount
+            ];
+        }
+        return $emiSchedule;
+    }    
 }
