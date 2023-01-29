@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin\Loan;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoanApplicationPatchRequest;
 use App\Services\Loan\LoanService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use App\Http\Requests\LoanApplicationPatchRequest;
 
 class LoanController extends Controller
 {
@@ -29,9 +30,9 @@ class LoanController extends Controller
      /**
      * Update a loan api
      *
-     * @return \Illuminate\Http\Response
+     * @return Illuminate\Http\JsonResponse
      */
-    public function update(LoanApplicationPatchRequest $request, int $loanId)
+    public function update(LoanApplicationPatchRequest $request, int $loanId): JsonResponse
     {
         try {
             $loan = $this->loanService->update($request->toArray(), $loanId);

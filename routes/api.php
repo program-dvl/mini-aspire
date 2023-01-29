@@ -39,6 +39,7 @@ Route::controller(LoanController::class)->group(function(){
         Route::post('apply', 'apply');
         Route::get('list', 'list');
         Route::get('{id}', 'details');
+        Route::post('repayment', 'repayment');
     });
 });
 

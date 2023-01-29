@@ -4,35 +4,48 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginPostRequest;
-use Auth;
+use App\Services\Auth\AuthService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class LoginController extends Controller
 {
     /**
+     * @var App\Services\Auth\AuthService
+     */
+    public $authService;
+
+    /**
+     * Create a new Loan Controller instance.
+     *
+     * @param  App\Services\Auth\AuthService $authService
+     * @return void
+     */
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    /**
      * Admin Login api
      *
-     * @return \Illuminate\Http\Response
+     * @return Illuminate\Http\JsonResponse
      */
-    public function login(LoginPostRequest $request)
+    public function login(LoginPostRequest $request): JsonResponse
     {
-        if(Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])){
-            $user = Auth::guard('admin')->user(); 
-            $success['token'] =  $user->createToken('MyApp')->plainTextToken; 
-            $success['name'] =  $user->name;
-   
-            return $this->sendResponse(
-                $success, 
-                trans('auth.login_success'), 
-                Response::HTTP_OK
-            );
-        } 
-        else{ 
+        $checkLogin = $this->authService->checkAdminLogin($request->email, $request->password);
+        if (!$checkLogin) {
             return $this->sendError(
                 'Unauthorised.', 
                 ['error'=> trans('auth.unauthorised')],
                 Response::HTTP_FORBIDDEN
             );
-        } 
+        } else {
+            return $this->sendResponse(
+                $checkLogin, 
+                trans('auth.login_success'), 
+                Response::HTTP_OK
+            );
+        }
     }
 }

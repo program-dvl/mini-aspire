@@ -43,4 +43,28 @@ interface LoanInterface
      */
     public function savePaymentReschedule(array $payload);
 
+    /**
+     * Repay loan EMI
+     *
+     * @param int $scheduleId
+     * @return void
+     */
+    public function repaymentSchedule($scheduleId);
+
+    /**
+     * Get the count of pending schedules of loan
+     *
+     * @param int $loanId
+     * @return void
+     */
+    public function checkPendingSchedules($loanId);
+
+    /**
+     * Make a loan status to paid
+     *
+     * @param int $loanId
+     * @return void
+     */
+    public function makeLoanPaid($loanId);
+
 }

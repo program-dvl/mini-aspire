@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Customer\Loan;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanApplicationPostRequest;
+use App\Http\Requests\LoanRepaymentPostRequest;
 use App\Services\Loan\LoanService;
 use Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 class LoanController extends Controller
@@ -30,9 +32,9 @@ class LoanController extends Controller
      /**
      * Apply For Loan api
      *
-     * @return \Illuminate\Http\Response
+     * @return Illuminate\Http\JsonResponse
      */
-    public function apply(LoanApplicationPostRequest $request)
+    public function apply(LoanApplicationPostRequest $request): JsonResponse
     {
         $payload = $request->toArray();
         $payload['customer_id'] = Auth::user()->id;
@@ -44,9 +46,9 @@ class LoanController extends Controller
      /**
      * API to gey list of loans
      *
-     * @return \Illuminate\Http\Response
+     * @return Illuminate\Http\JsonResponse
      */
-    public function list()
+    public function list(): JsonResponse
     {
         $customerId = Auth::user()->id;
         $list = $this->loanService->list($customerId);
@@ -56,9 +58,9 @@ class LoanController extends Controller
      /**
      * Apply to get specific loan details
      *
-     * @return \Illuminate\Http\Response
+     * @return Illuminate\Http\JsonResponse
      */
-    public function details(int $id)
+    public function details(int $id): JsonResponse
     {
         try {
             $loan = $this->loanService->details($id);
@@ -71,4 +73,16 @@ class LoanController extends Controller
             );
         }
     }
+
+     /**
+     * Repayment of EMI
+     *
+     * @return Illuminate\Http\JsonResponse
+     */
+    public function repayment(LoanRepaymentPostRequest $request): JsonResponse
+    {
+        $this->loanService->repayment($request->toArray());
+        return $this->sendResponse([], trans('loan.loan_repayment_success'), Response::HTTP_OK);
+    }
+    
 }

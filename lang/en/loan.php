@@ -18,5 +18,6 @@ return [
     'success_listing' => 'Loans listed successfully.',
     'loan_found' => 'Loan data listed successfully.',
     'loan_not_found' => 'Loan data not found.',
-    'update_success' => 'Loan data updated successfully.'
+    'update_success' => 'Loan data updated successfully.',
+    'loan_repayment_success' => 'Loan repayment paid successfully.'
 ];

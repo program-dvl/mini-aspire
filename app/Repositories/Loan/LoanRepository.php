@@ -1,10 +1,10 @@
 <?php
 namespace App\Repositories\Loan;
 
+use App\Enums\LoanRepaymentScheduleStatusEnum;
+use App\Enums\LoanStatusEnum;
 use App\Models\Loan;
 use App\Models\RepaymentSchedule;
-use Carbon\Carbon;
-use Illuminate\Support\Arr;
 
 class LoanRepository implements LoanInterface
 {
@@ -65,9 +65,8 @@ class LoanRepository implements LoanInterface
      * @param int $loanId
      * @return void
      */
-    public function details(int $loanId)
-    {
-        return $this->loan->findOrFail($loanId);
+    public function details(int $loanId) {
+        return $this->loan->with('paymentSchedule')->findOrFail($loanId);
     }
 
      /**
@@ -76,8 +75,7 @@ class LoanRepository implements LoanInterface
      * @param array $data
      * @return void
      */
-    public function update(array $payload, int $loanId)
-    {
+    public function update(array $payload, int $loanId) {
         $loan = $this->loan->findOrFail($loanId);
         return $loan->update($payload);
     }
@@ -90,6 +88,42 @@ class LoanRepository implements LoanInterface
      */
     public function savePaymentReschedule($schedules) {
         $this->repaymentSchedule->insert($schedules);
+    }
+
+     /**
+     * Repay loan EMI
+     *
+     * @param int $scheduleId
+     * @return void
+     */
+    public function repaymentSchedule($scheduleId) {
+        $loan = $this->repaymentSchedule->find($scheduleId);
+        $payload = ['status' => LoanRepaymentScheduleStatusEnum::paid];
+        return $loan->update($payload);
+    }
+
+     /**
+     * Get the count of pending schedules of loan
+     *
+     * @param int $loanId
+     * @return void
+     */
+    public function checkPendingSchedules($loanId) {
+        return $this->repaymentSchedule
+            ->where('loan_id', $loanId)
+            ->whereNot('status', LoanRepaymentScheduleStatusEnum::paid)->count();
+    }
+
+     /**
+     * Make a loan status to paid
+     *
+     * @param int $loanId
+     * @return void
+     */
+    public function makeLoanPaid($loanId) {
+        $loan = $this->loan->find($loanId);
+        $payload = ['status' => LoanStatusEnum::paid];
+        $loan->update($payload);
     }
 
 }

@@ -34,7 +34,7 @@ class LoanService
     {
         $loan = $this->loanRepository->apply($payload);
         $schedules = $this->generateRepaymentSchedule($payload['amount'], $payload['term']);
-        $mappedData = Arr::map($schedules, function ($value, $key) use ($loan) {
+        $mappedData = Arr::map($schedules, function ($value) use ($loan) {
             $value['created_at'] = Carbon::now()->toDateTimeString();
             $value['loan_id'] = $loan->id;
             return $value;
@@ -81,7 +81,6 @@ class LoanService
      * 
      * @param float $amount
      * @param int $term
-     * @param int $loanId
      * @return array
      */
     public function generateRepaymentSchedule($amount, $term) {
@@ -95,5 +94,20 @@ class LoanService
             ];
         }
         return $emiSchedule;
-    }    
+    } 
+    
+    /**
+     * Repay loan EMI
+     * 
+     * @param array $payload
+     * @return void
+     */
+    public function repayment(array $payload)
+    {
+        $this->loanRepository->repaymentSchedule($payload['schedule_id']);
+        $count = $this->loanRepository->checkPendingSchedules($payload['loan_id']);
+        if (!$count) {
+            $this->loanRepository->makeLoanPaid($payload['loan_id']);
+        }
+    }
 }
