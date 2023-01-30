@@ -24,8 +24,8 @@ class LoanApplicationPostRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|between:0,999999999.99',
-            'term' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|between:0,999999999.99',
+            'term' => 'required|numeric|min:1|regex:/^\d*(\.\d{2})?$/',
         ];
     }
 }
