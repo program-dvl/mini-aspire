@@ -10,12 +10,16 @@
 
 - 1 customer record will be added to user table
 
+
   **Email**: dhaval@miniaspire.com
+
   **Password**: password
 
 - 1 admin user record will be added to admin table
 
+
   **Email**: admin@miniaspire.com
+
   **Password**: password
 
 So, We can use above credetials to test authenticated API.
