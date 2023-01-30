@@ -29,7 +29,7 @@ class CheckPaymentScheduleAmount implements Rule
     public function passes($attribute, $value)
     {
         $data = RepaymentSchedule::find($this->scheduleId);
-        return ($value >= $data->amount) ? true : false; 
+        return (!empty($data) && $value >= $data->amount) ? true : false; 
     }
 
     /**
