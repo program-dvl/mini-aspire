@@ -5,6 +5,7 @@
 3) composer install
 4) php artisan migrate
 5) php artisan db:seed
+7) php artisan key:generate
 
 - Seeder will add 2 records.
 
