@@ -23,7 +23,7 @@ class LoginController extends Controller
     public $responseHelper;
 
     /**
-     * Create a new Loan Controller instance.
+     * Create a new Login Controller instance.
      *
      * @param  App\Services\Auth\AuthService $authService
      * @param  App\Helpers\ResponseHelper $responseHelper
@@ -39,13 +39,19 @@ class LoginController extends Controller
     }
 
     /**
-     * Login api
+     * Customer Login api
      *
+     * @param  LoginPostRequest $request
+     * 
      * @return Illuminate\Http\JsonResponse
      */
     public function login(LoginPostRequest $request): JsonResponse
     {
-        $checkLogin = $this->authService->checkLogin($request->email, $request->password);
+        $checkLogin = $this->authService->checkLogin(
+            $request->email, 
+            $request->password
+        );
+
         if (!$checkLogin) {
             return $this->responseHelper->error(
                 Response::HTTP_FORBIDDEN,

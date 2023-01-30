@@ -7,7 +7,7 @@ use Auth;
 class AuthService
 {
      /**
-     * Check user login
+     * Check admin user login
      *
      * @param string $email
      * @param string $password
@@ -26,7 +26,7 @@ class AuthService
     }
 
      /**
-     * Check user login
+     * Check customer user login
      *
      * @param string $email
      * @param string $password

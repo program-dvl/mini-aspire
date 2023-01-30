@@ -30,6 +30,7 @@ interface LoanInterface
     /**
      * Update a loan data
      *
+     * @param array $payload
      * @param int $customerId
      * @return array
      */

@@ -7,10 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanApplicationPostRequest;
 use App\Http\Requests\LoanRepaymentPostRequest;
 use App\Services\Loan\LoanService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
@@ -42,7 +42,8 @@ class LoanController extends Controller
 
      /**
      * Apply For Loan api
-     *
+     * 
+     * @param LoanApplicationPostRequest $request
      * @return Illuminate\Http\JsonResponse
      */
     public function apply(LoanApplicationPostRequest $request): JsonResponse
@@ -77,7 +78,9 @@ class LoanController extends Controller
 
      /**
      * Apply to get specific loan details
-     *
+     * 
+     * @param int $id
+     * 
      * @return Illuminate\Http\JsonResponse
      */
     public function details(int $id): JsonResponse
@@ -102,6 +105,8 @@ class LoanController extends Controller
      /**
      * Repayment of EMI
      *
+     * @param LoanRepaymentPostRequest $request
+     *  
      * @return Illuminate\Http\JsonResponse
      */
     public function repayment(LoanRepaymentPostRequest $request): JsonResponse

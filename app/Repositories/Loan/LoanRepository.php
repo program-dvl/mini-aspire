@@ -72,7 +72,8 @@ class LoanRepository implements LoanInterface
      /**
      * Update a loan data
      *
-     * @param array $data
+     * @param array $payload
+     * @param int $loanId
      * @return void
      */
     public function update(array $payload, int $loanId) {

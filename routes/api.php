@@ -26,14 +26,17 @@ Route::middleware('auth:sanctum')->get('/admin/user', function (Request $request
     return $request->user();
 });
 
+// Customer user login
 Route::controller(LoginController::class)->group(function(){
     Route::post('login', 'login');
 });
 
+// Admin user login
 Route::controller(AdminLoginController::class)->group(function(){
     Route::post('admin/login', 'login');
 });
 
+// Customer user's routes for loan's API
 Route::controller(LoanController::class)->group(function(){
     Route::group(['prefix' => 'loan', 'middleware' => 'auth:sanctum'], function(){
         Route::post('apply', 'apply');
@@ -43,6 +46,7 @@ Route::controller(LoanController::class)->group(function(){
     });
 });
 
+// Admin user's routes for loan management API
 Route::controller(AdminLoanController::class)->group(function(){
     Route::group(['prefix' => 'admin/loan', 'middleware' => 'auth:sanctum'], function(){
         Route::patch('{id}', 'update');

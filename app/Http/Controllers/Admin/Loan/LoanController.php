@@ -39,8 +39,11 @@ class LoanController extends Controller
     }
 
      /**
-     * Update a loan api
+     * Update a loan api ( loan status )
      *
+     * @param  LoanApplicationPatchRequest $request
+     * @param  int $loanId
+     * 
      * @return Illuminate\Http\JsonResponse
      */
     public function update(LoanApplicationPatchRequest $request, int $loanId): JsonResponse
