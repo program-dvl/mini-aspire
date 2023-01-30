@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Customer\Loan;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanApplicationPostRequest;
 use App\Http\Requests\LoanRepaymentPostRequest;
 use App\Services\Loan\LoanService;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -19,14 +20,24 @@ class LoanController extends Controller
     public $loanService;
 
     /**
+     * @var App\Helpers\ResponseHelper
+     */
+    public $responseHelper;
+
+    /**
      * Create a new Loan Controller instance.
      *
      * @param  App\Services\Loan\LoanService $loanService
+     * @param  App\Helpers\ResponseHelper $responseHelper
      * @return void
      */
-    public function __construct(LoanService $loanService)
+    public function __construct(
+        LoanService $loanService,
+        ResponseHelper $responseHelper
+    )
     {
         $this->loanService = $loanService;
+        $this->responseHelper = $responseHelper;
     }
 
      /**
@@ -38,9 +49,14 @@ class LoanController extends Controller
     {
         $payload = $request->toArray();
         $payload['customer_id'] = Auth::user()->id;
+        
         $this->loanService->apply($payload);
 
-        return $this->sendResponse([], trans('loan.success'), Response::HTTP_CREATED);
+        return $this->responseHelper->success(
+            Response::HTTP_CREATED, 
+            'loan.success', 
+            []
+        );
     }
 
      /**
@@ -52,7 +68,11 @@ class LoanController extends Controller
     {
         $customerId = Auth::user()->id;
         $list = $this->loanService->list($customerId);
-        return $this->sendResponse($list, trans('loan.success_listing'), Response::HTTP_OK);
+        return $this->responseHelper->success(
+            Response::HTTP_OK, 
+            'loan.success_listing', 
+            $list->toArray()
+        );
     }
 
      /**
@@ -64,12 +84,17 @@ class LoanController extends Controller
     {
         try {
             $loan = $this->loanService->details($id);
-            return $this->sendResponse($loan, trans('loan.loan_found'), Response::HTTP_OK);
+            return $this->responseHelper->success(
+                Response::HTTP_OK, 
+                'loan.loan_found', 
+                $loan->toArray()
+            );
         } catch (ModelNotFoundException $e) {
-            return $this->sendError(
-                trans('loan.loan_not_found'), 
-                [],
-                Response::HTTP_NOT_FOUND
+            return $this->responseHelper->error(
+                Response::HTTP_NOT_FOUND,
+                Response::$statusTexts[Response::HTTP_NOT_FOUND],
+                false,
+                'loan.loan_not_found'
             );
         }
     }
@@ -82,7 +107,11 @@ class LoanController extends Controller
     public function repayment(LoanRepaymentPostRequest $request): JsonResponse
     {
         $this->loanService->repayment($request->toArray());
-        return $this->sendResponse([], trans('loan.loan_repayment_success'), Response::HTTP_OK);
+        return $this->responseHelper->success(
+            Response::HTTP_OK, 
+            'loan.loan_repayment_success', 
+            []
+        );
     }
     
 }

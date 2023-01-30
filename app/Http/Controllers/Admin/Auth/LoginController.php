@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginPostRequest;
 use App\Services\Auth\AuthService;
@@ -16,14 +17,24 @@ class LoginController extends Controller
     public $authService;
 
     /**
+     * @var App\Helpers\ResponseHelper
+     */
+    public $responseHelper;
+
+    /**
      * Create a new Loan Controller instance.
      *
      * @param  App\Services\Auth\AuthService $authService
+     * @param  App\Helpers\ResponseHelper $responseHelper
      * @return void
      */
-    public function __construct(AuthService $authService)
+    public function __construct(
+        AuthService $authService,
+        ResponseHelper $responseHelper
+    )
     {
         $this->authService = $authService;
+        $this->responseHelper = $responseHelper;
     }
 
     /**
@@ -35,16 +46,17 @@ class LoginController extends Controller
     {
         $checkLogin = $this->authService->checkAdminLogin($request->email, $request->password);
         if (!$checkLogin) {
-            return $this->sendError(
-                'Unauthorised.', 
-                ['error'=> trans('auth.unauthorised')],
-                Response::HTTP_FORBIDDEN
+            return $this->responseHelper->error(
+                Response::HTTP_FORBIDDEN,
+                Response::$statusTexts[Response::HTTP_FORBIDDEN],
+                false,
+                'auth.unauthorised'
             );
         } else {
-            return $this->sendResponse(
-                $checkLogin, 
-                trans('auth.login_success'), 
-                Response::HTTP_OK
+            return $this->responseHelper->success(
+                Response::HTTP_OK, 
+                'auth.login_success', 
+                $checkLogin
             );
         }
     }

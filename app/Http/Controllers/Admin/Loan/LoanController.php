@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Loan;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoanApplicationPatchRequest;
 use App\Services\Loan\LoanService;
@@ -17,14 +18,24 @@ class LoanController extends Controller
     public $loanService;
 
     /**
+     * @var App\Helpers\ResponseHelper
+     */
+    public $responseHelper;
+
+    /**
      * Create a new Loan Controller instance.
      *
      * @param  App\Services\Loan\LoanService $loanService
+     * @param  App\Helpers\ResponseHelper $responseHelper
      * @return void
      */
-    public function __construct(LoanService $loanService)
+    public function __construct(
+        LoanService $loanService,
+        ResponseHelper $responseHelper
+    )
     {
         $this->loanService = $loanService;
+        $this->responseHelper = $responseHelper;
     }
 
      /**
@@ -35,13 +46,18 @@ class LoanController extends Controller
     public function update(LoanApplicationPatchRequest $request, int $loanId): JsonResponse
     {
         try {
-            $loan = $this->loanService->update($request->toArray(), $loanId);
-            return $this->sendResponse($loan, trans('loan.update_success'), Response::HTTP_OK);
+            $this->loanService->update($request->toArray(), $loanId);
+            return $this->responseHelper->success(
+                Response::HTTP_OK, 
+                'loan.update_success', 
+                []
+            );
         } catch (ModelNotFoundException $e) {
-            return $this->sendError(
-                trans('loan.loan_not_found'), 
-                [],
-                Response::HTTP_NOT_FOUND
+            return $this->responseHelper->error(
+                Response::HTTP_NOT_FOUND,
+                Response::$statusTexts[Response::HTTP_NOT_FOUND],
+                false,
+                'loan.loan_not_found'
             );
         }
     }
